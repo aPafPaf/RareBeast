@@ -6,7 +6,6 @@ using RareBeasts;
 
 namespace RareBeasts.Utils;
 
-//internal class Mouse : BaseSettingsPlugin<CheckStashSettings>
 public class Mouse
 {
     private readonly BeastsSettings _settings;
@@ -97,19 +96,15 @@ public class Mouse
         float currentX = GetCursorPosition().X;
         float currentY = GetCursorPosition().Y;
 
-        // Определяем количество шагов для плавного перемещения
         float steps = _settings.MouseSettings.MouseStep.Value;
 
         for (int i = 0; i <= steps; i++)
         {
-            // Вычисляем новые координаты с учетом шага
             float newX = currentX + (targetX - currentX) * i / steps;
             float newY = currentY + (targetY - currentY) * i / steps;
 
-            // Плавно перемещаем мышь
             MoveMouse(new SharpDX.Vector2(newX, newY));
 
-            // Задержка между шагами для создания эффекта плавности
             Thread.Sleep(random.Next(_settings.MouseSettings.MouseStepDelayMin.Value, _settings.MouseSettings.MouseStepDelayMin.Value + _settings.MouseSettings.MouseStepDelayMax.Value));
         }
         mouseIsBusy = false;
@@ -131,7 +126,6 @@ public class Mouse
 
         Vector2 controlPoint = new Vector2(centerX, centerY + radius);
 
-        // Вычисляем шаги для кривой Безье
         int steps = 10;
         float stepSize = 1.0f / steps;
 
@@ -140,14 +134,11 @@ public class Mouse
             float t = i * stepSize;
             float oneMinusT = 1 - t;
 
-            // Вычисляем позицию на кривой Безье
             float x = oneMinusT * (oneMinusT * startPos.X + t * controlPoint.X) + t * (oneMinusT * controlPoint.X + t * endPos.X);
             float y = oneMinusT * (oneMinusT * startPos.Y + t * controlPoint.Y) + t * (oneMinusT * controlPoint.Y + t * endPos.Y);
 
-            // Перемещаем мышь в вычисленную позицию
             MoveMouse(new Vector2(x, y));
 
-            // Задержка между шагами для создания плавного эффекта
             Thread.Sleep(random.Next(_settings.MouseSettings.MouseStepDelayMin.Value, _settings.MouseSettings.MouseStepDelayMin.Value + _settings.MouseSettings.MouseStepDelayMax.Value));
         }
     }

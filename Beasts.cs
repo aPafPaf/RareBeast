@@ -234,7 +234,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     public bool GrabBeast(Vector2 beastPos)
     {
-        // Смещение окна игры
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
         mouse.MouseMoveNonLinear(beastPos + windowOffset);
@@ -248,32 +247,17 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     public bool GetBestiaryOrb()
     {
-        //// Получаем UI элементы инвентаря игрока
-        //var playerInventoryUI = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 25)?.Children;
-        //if (playerInventoryUI == null)
-        //{
-        //    LogMessage("Couldn't find inventory.");
-        //    return false;
-        //}
 
         string bsOrb = "Metadata/Items/Currency/CurrencyItemiseCapturedMonster";
 
         var playerInventory =  GameController.IngameState.ServerData.PlayerInventories[0].Inventory.InventorySlotItems;
 
-        //// Фильтруем предметы, проверяя на null
-        //var bestiartOrbs = playerInventoryUI
-        //    .Where(item => item?.Entity != null && item.Entity.Metadata == bsOrb)
-        //    .ToList();
-
         var bestiartOrbs = playerInventory.Where(item => item.Item.Metadata == bsOrb).ToList();
 
-        // Если предметов Bestiary Orb нет, возвращаем false
         if (!bestiartOrbs.Any()) return false;
 
-        // Смещение окна игры
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
-        // Получаем позицию первого найденного предмета Bestiary Orb
         var firstItem = bestiartOrbs.FirstOrDefault();
         if (firstItem == null)
         {
@@ -283,13 +267,11 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         Vector2 itemPos = firstItem.GetClientRect().Center;
 
-        // Двигаем мышь к позиции предмета
         mouse.MouseMoveNonLinear(itemPos + windowOffset);
         Thread.Sleep(Settings.MouseSettings.ActionDelay);
 
         var sss = GameController.IngameState.UIHover?.Entity?.Metadata;
 
-        // Проверяем, что над предметом находится курсор
         if (Settings.OrbCheck)
         {
             Thread.Sleep(Settings.MouseSettings.CheckDelay);

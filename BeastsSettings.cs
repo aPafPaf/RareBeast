@@ -28,18 +28,18 @@ public class BeastsSettings : ISettings
 
     [JsonIgnore] public CustomNode BeastPicker { get; set; }
 
-    [Menu("CraftHotKey")]
-    public HotkeyNode CraftHotKey { get; set; } = new HotkeyNode(Keys.Space);
+    [Menu("Start/Stop")]
+    public HotkeyNode StartStopHotKey { get; set; } = new HotkeyNode(Keys.Space);
 
     public ToggleNode Work { get; set; } = new ToggleNode(false);
 
     public ToggleNode OrbCheck { get; set; } = new ToggleNode(false);
 
-    public MouseSettings MouseSettings { get; set; } = new();
+    public DSettings DSettings { get; set; } = new();
 }
 
 [Submenu(CollapsedByDefault = true)]
-public class MouseSettings
+public class DSettings
 {
     [Menu("MouseStep")]
     public RangeNode<int> MouseStep { get; set; } = new RangeNode<int>(1, 1, 20);
@@ -55,9 +55,6 @@ public class MouseSettings
 
     [Menu("MouseMoveDelay")]
     public RangeNode<int> MouseMoveDelay { get; set; } = new RangeNode<int>(50, 10, 300);
-
-    [Menu("MouseClickAddRangomTime")]
-    public RangeNode<int> MouseClickAddRangomTime { get; set; } = new RangeNode<int>(0, 10, 300);
 
     [Menu("Action Delay")]
     public RangeNode<int> ActionDelay { get; set; } = new RangeNode<int>(0, 10, 2000);

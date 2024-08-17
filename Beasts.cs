@@ -50,7 +50,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     public override Job Tick()
     {
-        if (Settings.CraftHotKey.PressedOnce())
+        if (Settings.StartStopHotKey.PressedOnce())
         {
             Settings.Work.Value = !Settings.Work.Value;
 
@@ -122,7 +122,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         else
         {
             ReleaseBeast(releaseButton.Center);
-            Thread.Sleep(Settings.MouseSettings.ActionDelay);
+            Thread.Sleep(Settings.DSettings.ActionDelay);
         }
 
     }
@@ -136,12 +136,12 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         Utils.Keyboard.KeyDown(System.Windows.Forms.Keys.LControlKey);
 
-        mouse.LeftDown(Settings.MouseSettings.MouseClickDelay);
-        mouse.LeftUp(Settings.MouseSettings.MouseClickDelay);
+        mouse.LeftDown(Settings.DSettings.MouseClickDelay);
+        mouse.LeftUp(Settings.DSettings.MouseClickDelay);
 
         Utils.Keyboard.KeyUp(System.Windows.Forms.Keys.LControlKey);
 
-        Thread.Sleep(Settings.MouseSettings.ActionDelay);
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         return true;
     }
@@ -156,10 +156,10 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         mouse.MouseMoveNonLinear(freeSlot + windowOffset);
 
-        mouse.LeftDown(Settings.MouseSettings.MouseClickDelay);
-        mouse.LeftUp(Settings.MouseSettings.MouseClickDelay);
+        mouse.LeftDown(Settings.DSettings.MouseClickDelay);
+        mouse.LeftUp(Settings.DSettings.MouseClickDelay);
 
-        Thread.Sleep(Settings.MouseSettings.ActionDelay);
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         return true;
     }
@@ -239,8 +239,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         mouse.MouseMoveNonLinear(beastPos + windowOffset);
 
 
-        mouse.LeftDown(Settings.MouseSettings.MouseClickDelay);
-        mouse.LeftUp(Settings.MouseSettings.MouseClickDelay);
+        mouse.LeftDown(Settings.DSettings.MouseClickDelay);
+        mouse.LeftUp(Settings.DSettings.MouseClickDelay);
 
         return true;
     }
@@ -268,18 +268,18 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         Vector2 itemPos = firstItem.GetClientRect().Center;
 
         mouse.MouseMoveNonLinear(itemPos + windowOffset);
-        Thread.Sleep(Settings.MouseSettings.ActionDelay);
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         var sss = GameController.IngameState.UIHover?.Entity?.Metadata;
 
         if (Settings.OrbCheck)
         {
-            Thread.Sleep(Settings.MouseSettings.CheckDelay);
+            Thread.Sleep(Settings.DSettings.CheckDelay);
 
             if (GameController.IngameState.UIHover?.Entity?.Metadata == bsOrb)
             {
-                mouse.RightDown(Settings.MouseSettings.MouseClickDelay);
-                mouse.RightUp(Settings.MouseSettings.MouseClickDelay);
+                mouse.RightDown(Settings.DSettings.MouseClickDelay);
+                mouse.RightUp(Settings.DSettings.MouseClickDelay);
 
                 return true;
             }
@@ -290,8 +290,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             }
 
         }
-        mouse.RightDown(Settings.MouseSettings.MouseClickDelay);
-        mouse.RightUp(Settings.MouseSettings.MouseClickDelay);
+        mouse.RightDown(Settings.DSettings.MouseClickDelay);
+        mouse.RightUp(Settings.DSettings.MouseClickDelay);
 
         return true;
     }

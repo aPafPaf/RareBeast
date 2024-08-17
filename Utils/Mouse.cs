@@ -49,7 +49,7 @@ public class Mouse
     {
         mouseIsBusy = true;
         SetCursorPos((int)pos.X, (int)pos.Y);
-        Thread.Sleep(_settings.MouseSettings.MouseMoveDelay);
+        Thread.Sleep(_settings.DSettings.MouseMoveDelay);
         mouseIsBusy = false;
     }
 
@@ -57,7 +57,7 @@ public class Mouse
     {
         mouseIsBusy = true;
         mouse_event((int)MouseEvents.LeftDown, 0, 0, 0, 0);
-        Thread.Sleep(_settings.MouseSettings.MouseClickDelay.Value + delay);
+        Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
         mouseIsBusy = false;
     }
 
@@ -65,7 +65,7 @@ public class Mouse
     {
         mouseIsBusy = true;
         mouse_event((int)MouseEvents.LeftUp, 0, 0, 0, 0);
-        Thread.Sleep(_settings.MouseSettings.MouseClickDelay.Value + delay);
+        Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
         mouseIsBusy = false;
     }
 
@@ -73,7 +73,7 @@ public class Mouse
     {
         mouseIsBusy = true;
         mouse_event((int)MouseEvents.RightDown, 0, 0, 0, 0);
-        Thread.Sleep(_settings.MouseSettings.MouseClickDelay.Value + delay);
+        Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
         mouseIsBusy = false;
     }
 
@@ -81,7 +81,7 @@ public class Mouse
     {
         mouseIsBusy = true;
         mouse_event((int)MouseEvents.RightUp, 0, 0, 0, 0);
-        Thread.Sleep(_settings.MouseSettings.MouseClickDelay.Value + delay);
+        Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
         mouseIsBusy = false;
     }
 
@@ -96,7 +96,7 @@ public class Mouse
         float currentX = GetCursorPosition().X;
         float currentY = GetCursorPosition().Y;
 
-        float steps = _settings.MouseSettings.MouseStep.Value;
+        float steps = _settings.DSettings.MouseStep.Value;
 
         for (int i = 0; i <= steps; i++)
         {
@@ -105,7 +105,7 @@ public class Mouse
 
             MoveMouse(new SharpDX.Vector2(newX, newY));
 
-            Thread.Sleep(random.Next(_settings.MouseSettings.MouseStepDelayMin.Value, _settings.MouseSettings.MouseStepDelayMin.Value + _settings.MouseSettings.MouseStepDelayMax.Value));
+            Thread.Sleep(random.Next(_settings.DSettings.MouseStepDelayMin.Value, _settings.DSettings.MouseStepDelayMin.Value + _settings.DSettings.MouseStepDelayMax.Value));
         }
         mouseIsBusy = false;
     }
@@ -139,7 +139,7 @@ public class Mouse
 
             MoveMouse(new Vector2(x, y));
 
-            Thread.Sleep(random.Next(_settings.MouseSettings.MouseStepDelayMin.Value, _settings.MouseSettings.MouseStepDelayMin.Value + _settings.MouseSettings.MouseStepDelayMax.Value));
+            Thread.Sleep(random.Next(_settings.DSettings.MouseStepDelayMin.Value, _settings.DSettings.MouseStepDelayMin.Value + _settings.DSettings.MouseStepDelayMax.Value));
         }
     }
 }

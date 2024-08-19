@@ -1,6 +1,5 @@
 using ExileCore;
 using ExileCore.PoEMemory.MemoryObjects;
-using RareBeasts.Api;
 using RareBeasts.Data;
 using RareBeasts.ExileCore;
 using SharpDX;
@@ -25,9 +24,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
     {
         Name = "RareBeast";
         mouse = new Utils.Mouse(Settings);
-
-        Settings.FetchBeastPrices.OnPressed += async () => await FetchPrices();
-        Task.Run(FetchPrices);
     }
 
     public override bool Initialise()
@@ -35,17 +31,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
         return base.Initialise();
-    }
-
-    private async Task FetchPrices()
-    {
-        DebugWindow.LogMsg("Fetching Beast Prices from PoeNinja...");
-        var prices = await PoeNinja.GetBeastsPrices();
-        foreach (var beast in BeastsDatabase.AllBeasts)
-        {
-            Settings.BeastPrices[beast.DisplayName] = prices.TryGetValue(beast.DisplayName, out var price) ? price : -1;
-        }
-        Settings.LastUpdate = DateTime.Now;
     }
 
     public override Job Tick()
@@ -59,6 +44,13 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             while (Settings.Work.Value)
             {
                 Work();
+
+                if (Input.GetKeyState(Settings.StopHotKey.Value))
+                {
+                    Settings.Work.Value = false;
+                    return null;
+                }
+
             }
         }
 

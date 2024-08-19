@@ -62,10 +62,12 @@ public partial class Beasts
 
         var rectCaptureBeast = bestiary.CapturedBeastsPanel.GetChildFromIndices(1).GetClientRectCache;
 
-        foreach (var beast in beasts)
-        {
+        var beast = beasts.FirstOrDefault();
+
+        //foreach (var beast in beasts)
+        //{
             var beastRect = beast.GetClientRect().Center;
-            if (!rectCaptureBeast.Contains(beastRect)) continue;
+            if (!rectCaptureBeast.Contains(beastRect)) return;
 
             var capturedBeast = BeastsDatabase.AllBeasts.Find(b => b.DisplayName == beast.DisplayName);
             if (capturedBeast == null)
@@ -79,30 +81,7 @@ public partial class Beasts
                 Graphics.DrawFrame(beast.GetClientRect(), Color.Red, 2);
                 Graphics.DrawFrame(beast.GetChildAtIndex(3).GetClientRect(), Color.Red, 2);
             }
-        }
-    }
-
-    private void DrawFilledCircleInWorldPosition(Vector3 position, float radius, Color color)
-    {
-        var circlePoints = new List<Vector2>();
-        const int segments = 15;
-        const float segmentAngle = 2f * MathF.PI / segments;
-
-        for (var i = 0; i < segments; i++)
-        {
-            var angle = i * segmentAngle;
-            var currentOffset = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
-            var nextOffset = new Vector2(MathF.Cos(angle + segmentAngle), MathF.Sin(angle + segmentAngle)) * radius;
-
-            var currentWorldPos = position + new Vector3(currentOffset, 0);
-            var nextWorldPos = position + new Vector3(nextOffset, 0);
-
-            circlePoints.Add(GameController.Game.IngameState.Camera.WorldToScreen(currentWorldPos));
-            circlePoints.Add(GameController.Game.IngameState.Camera.WorldToScreen(nextWorldPos));
-        }
-
-        Graphics.DrawConvexPolyFilled(circlePoints.ToArray(), color with { A = Color.ToByte((int)((double)0.2f * byte.MaxValue)) });
-        Graphics.DrawPolyLine(circlePoints.ToArray(), color, 2);
+        //}
     }
 
 }

@@ -28,8 +28,11 @@ public class BeastsSettings : ISettings
 
     [JsonIgnore] public CustomNode BeastPicker { get; set; }
 
-    [Menu("Start/Stop")]
-    public HotkeyNode StartStopHotKey { get; set; } = new HotkeyNode(Keys.Space);
+    [Menu("Start")]
+    public HotkeyNode StartStopHotKey { get; set; } = new HotkeyNode(Keys.F7);
+
+    [Menu("Stop")]
+    public HotkeyNode StopHotKey { get; set; } = new HotkeyNode(Keys.Delete);
 
     public ToggleNode Work { get; set; } = new ToggleNode(false);
 

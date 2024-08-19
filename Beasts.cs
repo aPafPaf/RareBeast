@@ -41,16 +41,17 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
             mouse.MouseMoveNonLinear(this.GameController.Window.GetWindowRectangle().Center);
 
-            while (Settings.Work.Value)
+        }
+
+        if (Settings.Work.Value)
+        {
+            Work();
+            DestroyWindowCheck();
+
+            if (Input.GetKeyState(Settings.StopHotKey.Value))
             {
-                Work();
-
-                if (Input.GetKeyState(Settings.StopHotKey.Value))
-                {
-                    Settings.Work.Value = false;
-                    return null;
-                }
-
+                Settings.Work.Value = false;
+                return null;
             }
         }
 
@@ -117,6 +118,19 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             Thread.Sleep(Settings.DSettings.ActionDelay);
         }
 
+    }
+
+    public void DestroyWindowCheck()
+    {
+        var destroyWindow = GameController.IngameState.IngameUi.DestroyConfirmationWindow;
+        if (destroyWindow.IsVisible)
+        {
+            Thread.Sleep(Settings.DSettings.MouseClickDelay * 3);
+            Utils.Keyboard.KeyDown(System.Windows.Forms.Keys.Escape);
+            Thread.Sleep(Settings.DSettings.MouseClickDelay);
+            Utils.Keyboard.KeyUp(System.Windows.Forms.Keys.Escape);
+            Thread.Sleep(Settings.DSettings.MouseClickDelay);
+        }
     }
 
     public bool ReleaseBeast(Vector2 pos)

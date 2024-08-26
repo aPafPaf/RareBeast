@@ -57,11 +57,14 @@ public class DSettings
     public RangeNode<int> MouseClickDelay { get; set; } = new RangeNode<int>(50, 30, 300);
 
     [Menu("MouseMoveDelay")]
-    public RangeNode<int> MouseMoveDelay { get; set; } = new RangeNode<int>(50, 10, 300);
+    public RangeNode<int> MouseMoveDelay { get; set; } = new RangeNode<int>(0, 0, 300);
 
     [Menu("Action Delay")]
-    public RangeNode<int> ActionDelay { get; set; } = new RangeNode<int>(0, 10, 2000);
+    public RangeNode<int> ActionDelay { get; set; } = new RangeNode<int>(0, 0, 2000);
 
     [Menu("Check Delay")]
     public RangeNode<int> CheckDelay { get; set; } = new RangeNode<int>(0, 10, 2000);
+
+    [Menu("Delay per Beast")]
+    public RangeNode<int> BeastDelay { get; set; } = new RangeNode<int>(0, 10, 20000);
 }

@@ -17,8 +17,9 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     private Utils.Mouse mouse;
     private static Random random = new Random();
-
     private SharpDX.Vector2 windowOffset;
+
+    int startTime = 0;
 
     public override void OnLoad()
     {
@@ -38,6 +39,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         if (Settings.StartStopHotKey.PressedOnce())
         {
             Settings.Work.Value = !Settings.Work.Value;
+            startTime = Environment.TickCount;
 
             mouse.MouseMoveNonLinear(this.GameController.Window.GetWindowRectangle().Center);
 
@@ -45,7 +47,11 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         if (Settings.Work.Value)
         {
+            if ((Environment.TickCount - startTime) < Settings.DSettings.BeastDelay) 
+                return null;
+
             Work();
+            startTime = Environment.TickCount;
             DestroyWindowCheck();
 
             if (Input.GetKeyState(Settings.StopHotKey.Value))
@@ -161,6 +167,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
         mouse.MouseMoveNonLinear(freeSlot + windowOffset);
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         mouse.LeftDown(Settings.DSettings.MouseClickDelay);
         mouse.LeftUp(Settings.DSettings.MouseClickDelay);
@@ -243,10 +250,12 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
         mouse.MouseMoveNonLinear(beastPos + windowOffset);
-
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         mouse.LeftDown(Settings.DSettings.MouseClickDelay);
         mouse.LeftUp(Settings.DSettings.MouseClickDelay);
+
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         return true;
     }
@@ -287,6 +296,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
                 mouse.RightDown(Settings.DSettings.MouseClickDelay);
                 mouse.RightUp(Settings.DSettings.MouseClickDelay);
 
+                Thread.Sleep(Settings.DSettings.ActionDelay);
+
                 return true;
             }
             else
@@ -298,6 +309,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         }
         mouse.RightDown(Settings.DSettings.MouseClickDelay);
         mouse.RightUp(Settings.DSettings.MouseClickDelay);
+
+        Thread.Sleep(Settings.DSettings.ActionDelay);
 
         return true;
     }

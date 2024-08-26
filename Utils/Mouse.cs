@@ -9,7 +9,6 @@ namespace RareBeasts.Utils;
 public class Mouse
 {
     private readonly BeastsSettings _settings;
-    public bool mouseIsBusy = false;
 
     public Mouse(BeastsSettings settings)
     {
@@ -47,47 +46,36 @@ public class Mouse
 
     public void MoveMouse(Vector2 pos)
     {
-        mouseIsBusy = true;
         SetCursorPos((int)pos.X, (int)pos.Y);
         Thread.Sleep(_settings.DSettings.MouseMoveDelay);
-        mouseIsBusy = false;
     }
 
     public void LeftDown(int delay)
     {
-        mouseIsBusy = true;
         mouse_event((int)MouseEvents.LeftDown, 0, 0, 0, 0);
         Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
-        mouseIsBusy = false;
     }
 
     public void LeftUp(int delay)
     {
-        mouseIsBusy = true;
         mouse_event((int)MouseEvents.LeftUp, 0, 0, 0, 0);
         Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
-        mouseIsBusy = false;
     }
 
     public void RightDown(int delay)
     {
-        mouseIsBusy = true;
         mouse_event((int)MouseEvents.RightDown, 0, 0, 0, 0);
         Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
-        mouseIsBusy = false;
     }
 
     public void RightUp(int delay)
     {
-        mouseIsBusy = true;
         mouse_event((int)MouseEvents.RightUp, 0, 0, 0, 0);
         Thread.Sleep(_settings.DSettings.MouseClickDelay.Value + delay);
-        mouseIsBusy = false;
     }
 
     public void MouseMove(SharpDX.Vector2 position)
     {
-        mouseIsBusy = true;
         float targetX = position.X;
         float targetY = position.Y;
         Random random = new Random();
@@ -107,7 +95,6 @@ public class Mouse
 
             Thread.Sleep(random.Next(_settings.DSettings.MouseStepDelayMin.Value, _settings.DSettings.MouseStepDelayMin.Value + _settings.DSettings.MouseStepDelayMax.Value));
         }
-        mouseIsBusy = false;
     }
 
     public void MouseMoveNonLinear(Vector2 endPos)
@@ -141,5 +128,6 @@ public class Mouse
 
             Thread.Sleep(random.Next(_settings.DSettings.MouseStepDelayMin.Value, _settings.DSettings.MouseStepDelayMin.Value + _settings.DSettings.MouseStepDelayMax.Value));
         }
+        SetCursorPos((int)endPos.X, (int)endPos.Y);
     }
 }

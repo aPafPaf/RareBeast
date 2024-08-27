@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace RareBeasts;
 
@@ -19,6 +18,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
     private static Random random = new Random();
     private SharpDX.Vector2 windowOffset;
 
+    private bool prevActionRelease = false;
     int startTime = 0;
 
     public override void OnLoad()
@@ -47,7 +47,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         if (Settings.Work.Value)
         {
-            if ((Environment.TickCount - startTime) < Settings.DSettings.BeastDelay) 
+            if ((Environment.TickCount - startTime) < Settings.DSettings.BeastDelay)
                 return null;
 
             Work();
@@ -81,7 +81,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         var beasts = bestiary.CapturedBeastsPanel.CapturedBeasts;
 
-        if(!beasts.Any() ) 
+        if (!beasts.Any())
         {
             Settings.Work.Value = !Settings.Work.Value;
             return;
@@ -100,6 +100,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         var capturedBeast = BeastsDatabase.AllBeasts.Find(b => b.DisplayName == beast.DisplayName);
         if (capturedBeast == null)
         {
+            prevActionRelease = false;
 
             if (GetBestiaryOrb())
             {
@@ -121,7 +122,10 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         else
         {
             ReleaseBeast(releaseButton.Center);
-            Thread.Sleep(Settings.DSettings.ActionDelay);
+
+            prevActionRelease = true;
+
+            Thread.Sleep(Settings.DSettings.ActionDelay * 2);
         }
 
     }
@@ -144,7 +148,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
-        mouse.MouseMoveNonLinear(pos + windowOffset);
+        if (!prevActionRelease)
+            mouse.MouseMoveNonLinear(pos + windowOffset);
 
         Utils.Keyboard.KeyDown(System.Windows.Forms.Keys.LControlKey);
 
@@ -265,7 +270,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         string bsOrb = "Metadata/Items/Currency/CurrencyItemiseCapturedMonster";
 
-        var playerInventory =  GameController.IngameState.ServerData.PlayerInventories[0].Inventory.InventorySlotItems;
+        var playerInventory = GameController.IngameState.ServerData.PlayerInventories[0].Inventory.InventorySlotItems;
 
         var bestiartOrbs = playerInventory.Where(item => item.Item.Metadata == bsOrb).ToList();
 

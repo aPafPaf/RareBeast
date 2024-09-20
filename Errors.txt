@@ -1,8 +1,2 @@
 Build failed:
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(72, 5)] CS0106: Модификатор "private" недопустим для этого элемента.
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(134, 5)] CS0106: Модификатор "public" недопустим для этого элемента.
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(153, 5)] CS0106: Модификатор "public" недопустим для этого элемента.
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(171, 5)] CS0106: Модификатор "private" недопустим для этого элемента.
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(239, 5)] CS0106: Модификатор "public" недопустим для этого элемента.
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(252, 5)] CS0106: Модификатор "public" недопустим для этого элемента.
-[17.08.2024 14:12:40, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(301, 6)] CS1513: Требуется "}"
+[20.09.2024 3:17:52, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(210, 90)] CS1026: Требуется ")"

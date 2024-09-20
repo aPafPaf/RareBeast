@@ -196,25 +196,25 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         InventoryPlayer[,] inventorySlot = new InventoryPlayer[12, 5];
 
         //get pos inventory slots
-        var defRect = inventoryItems.Where(item => item.PosX == 0 && item.PosY == 0).FirstOrDefault();
+        var inventoryRect = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 25).GetClientRectCache;
+        var invSlotW = inventoryRect.Width / 12;
+        var invSlotH = inventoryRect.Height / 5;
 
-        var firtItem = inventoryItems.Where(item => item.PosX == 0 && item.PosY == 0).FirstOrDefault();
-
-        float offsetX = firtItem.GetClientRect().TopLeft.X;
-        float offsetY = firtItem.GetClientRect().TopLeft.Y;
+        float offsetX = inventoryRect.X;
+        float offsetY = inventoryRect.Y;
 
         for (int x = 0; x < 12; x++)
         {
             for (int y = 0; y < 5; y++)
             {
-                RectangleF rectSlot = new RectangleF(offsetX, offsetY, defRect.GetClientRect().Width, defRect.GetClientRect().Height);
+                RectangleF rectSlot = new RectangleF(offsetX, offsetY, invSlotW, invSlotH);
 
                 inventorySlot[x, y] = new InventoryPlayer(false, rectSlot);
 
-                offsetY += defRect.GetClientRect().Width;
+                offsetY += invSlotW;
             }
-            offsetY = firtItem.GetClientRect().TopLeft.Y;
-            offsetX += defRect.GetClientRect().Height;
+            offsetY = inventoryRect.Y;
+            offsetX += invSlotH;
         }
 
         // iterate through each item in the inventory and mark used slots

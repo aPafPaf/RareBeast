@@ -15,7 +15,6 @@ namespace RareBeasts;
 
 public class BeastsSettings : ISettings
 {
-
     public List<Beast> Beasts { get; set; } = new();
     public Dictionary<string, float> BeastPrices { get; set; } = new();
     public DateTime LastUpdate { get; set; } = DateTime.MinValue;
@@ -34,7 +33,18 @@ public class BeastsSettings : ISettings
     [Menu("Stop")]
     public HotkeyNode StopHotKey { get; set; } = new HotkeyNode(Keys.Delete);
 
-    public ToggleNode Work { get; set; } = new ToggleNode(false);
+    [Menu("Test")]
+    public HotkeyNode TestHotKey { get; set; } = new HotkeyNode(Keys.NumPad0);
+
+    [Menu("Beast Tab Name")]
+    public TextNode BeastTabName { get; set; } = new();
+
+    [Menu("Consumables Tab Name")]
+    public TextNode ConsumablesTabName { get; set; } = new();
+
+    public ToggleNode WorkGrabber { get; set; } = new ToggleNode(false);
+
+    public ToggleNode WorkStasher { get; set; } = new ToggleNode(false);
 
     public ToggleNode OrbCheck { get; set; } = new ToggleNode(false);
 
@@ -47,17 +57,8 @@ public class DSettings
     [Menu("MouseStep")]
     public RangeNode<int> MouseStep { get; set; } = new RangeNode<int>(1, 1, 20);
 
-    [Menu("MouseStepDelayMin")]
-    public RangeNode<int> MouseStepDelayMin { get; set; } = new RangeNode<int>(50, 0, 300);
-
-    [Menu("MouseStepDelayMax")]
-    public RangeNode<int> MouseStepDelayMax { get; set; } = new RangeNode<int>(50, 0, 300);
-
     [Menu("MouseClickDelay")]
     public RangeNode<int> MouseClickDelay { get; set; } = new RangeNode<int>(50, 30, 300);
-
-    [Menu("MouseMoveDelay")]
-    public RangeNode<int> MouseMoveDelay { get; set; } = new RangeNode<int>(0, 0, 300);
 
     [Menu("Action Delay")]
     public RangeNode<int> ActionDelay { get; set; } = new RangeNode<int>(0, 0, 2000);

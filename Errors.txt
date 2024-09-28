@@ -1,2 +1,2 @@
 Build failed:
-[20.09.2024 3:17:52, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\Beasts.cs(210, 90)] CS1026: Требуется ")"
+[28.09.2024 12:25:36, D:\GH\ExileApi-Compiled-3.24\Plugins\Source\RareBeast\StashInteraction.cs(123, 13)] CS0023: Оператор "!" невозможно применить к операнду типа "Inventory".

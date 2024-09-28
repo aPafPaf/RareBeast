@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace RareBeasts;
 
@@ -14,17 +15,20 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 {
     private readonly Dictionary<long, Entity> _trackedBeasts = new();
 
-    private Utils.Mouse mouse;
     private static Random random = new Random();
     private SharpDX.Vector2 windowOffset;
 
+    SlotInventory[,] playerInventory = new SlotInventory[12, 5];
+
+    Dictionary<string, List<SlotInventory>> stashTabs = [];
+
     private bool prevActionRelease = false;
+    private bool inventoryIsFull = false;
     int startTime = 0;
 
     public override void OnLoad()
     {
         Name = "RareBeast";
-        mouse = new Utils.Mouse(Settings);
     }
 
     public override bool Initialise()
@@ -38,17 +42,57 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
     {
         if (Settings.StartStopHotKey.PressedOnce())
         {
-            Settings.Work.Value = !Settings.Work.Value;
+            Settings.WorkGrabber.Value = !Settings.WorkGrabber.Value;
             startTime = Environment.TickCount;
 
-            mouse.MouseMoveNonLinear(this.GameController.Window.GetWindowRectangle().Center);
+            Utils.Mouse.MouseMoveNonLinear(this.GameController.Window.GetWindowRectangle().Center);
 
         }
 
-        if (Settings.Work.Value)
+        if (Input.GetKeyState(Settings.StopHotKey.Value))
+        {
+            Settings.WorkGrabber.Value = false;
+            Settings.WorkStasher.Value = false;
+
+            return null;
+        }
+
+        if (inventoryIsFull && Settings.WorkStasher.Value)
+        {
+            UpdateInventoryPlayer();
+
+            if (OpenStash())
+            {
+                Thread.Sleep(500);
+                if (OpenTab(Settings.BeastTabName.Value))
+                {
+                    OpenTab(Settings.BeastTabName.Value);
+                    Thread.Sleep(500);
+                    if (AllItemsToStash())
+                    {
+                        Thread.Sleep(500);
+                        if (TakeConsumablesFromTab(Settings.ConsumablesTabName.Value))
+                        {
+                            inventoryIsFull = false;
+                            Settings.WorkGrabber.Value = true;
+                            Settings.WorkStasher.Value = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (Settings.TestHotKey.PressedOnce())
+        {
+            TakeConsumablesFromTab(Settings.ConsumablesTabName.Value);
+        }
+
+        if (Settings.WorkGrabber.Value)
         {
             if ((Environment.TickCount - startTime) < Settings.DSettings.BeastDelay)
                 return null;
+
+            this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
             Work();
             startTime = Environment.TickCount;
@@ -56,7 +100,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
             if (Input.GetKeyState(Settings.StopHotKey.Value))
             {
-                Settings.Work.Value = false;
+                Settings.WorkGrabber.Value = false;
                 return null;
             }
         }
@@ -66,24 +110,74 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     private void Work()
     {
-        if (!Settings.Work) return;
+        if (!Settings.WorkGrabber) return;
+
+        Vector2 freeSlot = SearchFreeSpace();
+
+        if (freeSlot.IsZero)
+        {
+            Settings.WorkGrabber.Value = !Settings.WorkGrabber.Value;
+            inventoryIsFull = true;
+            Settings.WorkStasher.Value = true;
+
+            return;
+        }
+
+        var challengesPanel = GameController.IngameState.IngameUi.ChallengesPanel;
+        if (challengesPanel == null || challengesPanel.IsVisible == false)
+        {
+            Utils.Keyboard.KeyPress(System.Windows.Forms.Keys.H);
+        }
+
+        var captureButton = GameController.IngameState.IngameUi.GetChildFromIndices(46,2,0,1,1,65,0,19,0);
+
+        //(OpenLeftPanel/SentinelWindow/ChallengesPanel)46->2->0->1->1->65->0->19->1
+        var bestiaryTab = challengesPanel.TabContainer.BestiaryTab;
+        if (bestiaryTab == null) return;
+
+        if (bestiaryTab.IsVisible == false)
+        {
+            var tabBestiary = FindChildRecursiveLocal(challengesPanel, "Bestiary");
+            if (tabBestiary != null)
+            {
+                Utils.Mouse.MoveMouse(tabBestiary.GetClientRectCache.Center + windowOffset);
+                Utils.Mouse.LeftDown(1);
+                Utils.Mouse.LeftUp(1);
+            }
+        }
+        else
+        {
+            if (bestiaryTab.CapturedBeastsTab == null || bestiaryTab.CapturedBeastsTab.IsVisible == false)
+            {
+                if (captureButton != null && captureButton.IsVisible)
+                {
+                    Utils.Mouse.MoveMouse(captureButton.GetClientRectCache.Center + windowOffset);
+                    if(captureButton.HasShinyHighlight)
+                    {
+                        Utils.Mouse.LeftDown(1);
+                        Utils.Mouse.LeftUp(1);
+                    }
+                }
+            }
+        }
+
+        var inventory = GameController.IngameState.IngameUi.InventoryPanel;
+        if (inventory == null || inventory.IsVisible == false)
+        {
+            Utils.Keyboard.KeyPress(System.Windows.Forms.Keys.I);
+        }
 
         var bestiary = GameController.IngameState.IngameUi.GetBestiaryPanel();
         if (bestiary == null || bestiary.IsVisible == false) return;
 
-        var inventory = GameController.IngameState.IngameUi.InventoryPanel;
-        if (inventory == null || inventory.IsVisible == false) return;
-
         var capturedBeastsPanel = bestiary.CapturedBeastsPanel;
         if (capturedBeastsPanel == null || capturedBeastsPanel.IsVisible == false) return;
-
-        this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
         var beasts = bestiary.CapturedBeastsPanel.CapturedBeasts;
 
         if (!beasts.Any())
         {
-            Settings.Work.Value = !Settings.Work.Value;
+            Settings.WorkGrabber.Value = !Settings.WorkGrabber.Value;
             return;
         }
 
@@ -108,14 +202,15 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
                 if (!PlaceBeast())
                 {
                     LogMessage("Inventory Error");
-                    Settings.Work.Value = !Settings.Work.Value;
+
                     return;
                 }
             }
             else
             {
                 LogMessage("Error Grab Orb");
-                Settings.Work.Value = !Settings.Work.Value;
+                Settings.WorkGrabber.Value = !Settings.WorkGrabber.Value;
+
                 return;
             }
         }
@@ -149,12 +244,12 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
         if (!prevActionRelease)
-            mouse.MouseMoveNonLinear(pos + windowOffset);
+            Utils.Mouse.MouseMoveNonLinear(pos + windowOffset);
 
         Utils.Keyboard.KeyDown(System.Windows.Forms.Keys.LControlKey);
 
-        mouse.LeftDown(Settings.DSettings.MouseClickDelay);
-        mouse.LeftUp(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.LeftDown(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.LeftUp(Settings.DSettings.MouseClickDelay);
 
         Utils.Keyboard.KeyUp(System.Windows.Forms.Keys.LControlKey);
 
@@ -171,11 +266,11 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
-        mouse.MouseMoveNonLinear(freeSlot + windowOffset);
+        Utils.Mouse.MouseMoveNonLinear(freeSlot + windowOffset);
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
-        mouse.LeftDown(Settings.DSettings.MouseClickDelay);
-        mouse.LeftUp(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.LeftDown(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.LeftUp(Settings.DSettings.MouseClickDelay);
 
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
@@ -184,7 +279,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     private SharpDX.Vector2 SearchFreeSpace()
     {
-
         var inventoryItems = GameController.IngameState.ServerData.PlayerInventories[0].Inventory.InventorySlotItems;
         // quick sanity check
         if (inventoryItems.Count > 60)
@@ -245,7 +339,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             }
         }
 
-
         // no empty slots, so inventory is full
         return new Vector2(0, 0);
     }
@@ -254,11 +347,11 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
     {
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
-        mouse.MouseMoveNonLinear(beastPos + windowOffset);
+        Utils.Mouse.MouseMoveNonLinear(beastPos + windowOffset);
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
-        mouse.LeftDown(Settings.DSettings.MouseClickDelay);
-        mouse.LeftUp(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.LeftDown(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.LeftUp(Settings.DSettings.MouseClickDelay);
 
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
@@ -267,7 +360,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
     public bool GetBestiaryOrb()
     {
-
         string bsOrb = "Metadata/Items/Currency/CurrencyItemiseCapturedMonster";
 
         var playerInventory = GameController.IngameState.ServerData.PlayerInventories[0].Inventory.InventorySlotItems;
@@ -287,7 +379,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         Vector2 itemPos = firstItem.GetClientRect().Center;
 
-        mouse.MouseMoveNonLinear(itemPos + windowOffset);
+        Utils.Mouse.MouseMoveNonLinear(itemPos + windowOffset);
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
         var sss = GameController.IngameState.UIHover?.Entity?.Metadata;
@@ -298,8 +390,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
             if (GameController.IngameState.UIHover?.Entity?.Metadata == bsOrb)
             {
-                mouse.RightDown(Settings.DSettings.MouseClickDelay);
-                mouse.RightUp(Settings.DSettings.MouseClickDelay);
+                Utils.Mouse.RightDown(Settings.DSettings.MouseClickDelay);
+                Utils.Mouse.RightUp(Settings.DSettings.MouseClickDelay);
 
                 Thread.Sleep(Settings.DSettings.ActionDelay);
 
@@ -312,13 +404,14 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             }
 
         }
-        mouse.RightDown(Settings.DSettings.MouseClickDelay);
-        mouse.RightUp(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.RightDown(Settings.DSettings.MouseClickDelay);
+        Utils.Mouse.RightUp(Settings.DSettings.MouseClickDelay);
 
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
         return true;
     }
+
 
     public override void DrawSettings()
     {

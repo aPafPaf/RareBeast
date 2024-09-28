@@ -1,5 +1,6 @@
 using ExileCore;
 using ExileCore.PoEMemory.MemoryObjects;
+using ExileCore.Shared.Enums;
 using RareBeasts.Data;
 using RareBeasts.ExileCore;
 using SharpDX;
@@ -57,6 +58,13 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             return null;
         }
 
+        if (!Settings.FoldToStash.Value && inventoryIsFull)
+        {
+            inventoryIsFull = false;
+            Settings.WorkGrabber.Value = false;
+            Settings.WorkStasher.Value = false;
+        }
+
         if (inventoryIsFull && Settings.WorkStasher.Value)
         {
             UpdateInventoryPlayer();
@@ -66,7 +74,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
                 Thread.Sleep(500);
                 if (OpenTab(Settings.BeastTabName.Value))
                 {
-                    OpenTab(Settings.BeastTabName.Value);
                     Thread.Sleep(500);
                     if (AllItemsToStash())
                     {
@@ -274,6 +281,15 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
+        var itemsOnCursor = GameController.IngameState.ServerData.PlayerInventories.Where(x=>x.TypeId == InventoryNameE.Cursor1);
+        if(itemsOnCursor.Any())
+        {
+            if(itemsOnCursor.First().Inventory.ItemCount > 0)
+            {
+                PlaceBeast();
+            }
+        }
+
         return true;
     }
 
@@ -290,7 +306,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         InventoryPlayer[,] inventorySlot = new InventoryPlayer[12, 5];
 
         //get pos inventory slots
-        var inventoryRect = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 25).GetClientRectCache;
+        var inventoryRect = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 27).GetClientRectCache;
         var invSlotW = inventoryRect.Width / 12;
         var invSlotH = inventoryRect.Height / 5;
 

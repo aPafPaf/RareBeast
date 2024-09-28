@@ -46,6 +46,9 @@ public class BeastsSettings : ISettings
 
     public ToggleNode WorkStasher { get; set; } = new ToggleNode(false);
 
+    [Menu("Fold Beast To Stash")]
+    public ToggleNode FoldToStash { get; set; } = new ToggleNode(false);
+
     public ToggleNode OrbCheck { get; set; } = new ToggleNode(false);
 
     public DSettings DSettings { get; set; } = new();

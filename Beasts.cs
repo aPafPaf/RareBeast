@@ -89,11 +89,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             }
         }
 
-        if (Settings.TestHotKey.PressedOnce())
-        {
-            TakeConsumablesFromTab(Settings.ConsumablesTabName.Value);
-        }
-
         if (Settings.WorkGrabber.Value)
         {
             if ((Environment.TickCount - startTime) < Settings.DSettings.BeastDelay)
@@ -400,26 +395,6 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         var sss = GameController.IngameState.UIHover?.Entity?.Metadata;
 
-        if (Settings.OrbCheck)
-        {
-            Thread.Sleep(Settings.DSettings.CheckDelay);
-
-            if (GameController.IngameState.UIHover?.Entity?.Metadata == bsOrb)
-            {
-                Utils.Mouse.RightDown(Settings.DSettings.MouseClickDelay);
-                Utils.Mouse.RightUp(Settings.DSettings.MouseClickDelay);
-
-                Thread.Sleep(Settings.DSettings.ActionDelay);
-
-                return true;
-            }
-            else
-            {
-                LogMessage("Item on cursor");
-                return false;
-            }
-
-        }
         Utils.Mouse.RightDown(Settings.DSettings.MouseClickDelay);
         Utils.Mouse.RightUp(Settings.DSettings.MouseClickDelay);
 

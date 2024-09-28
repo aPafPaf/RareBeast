@@ -33,14 +33,6 @@ public class BeastsSettings : ISettings
     [Menu("Stop")]
     public HotkeyNode StopHotKey { get; set; } = new HotkeyNode(Keys.Delete);
 
-    [Menu("Test")]
-    public HotkeyNode TestHotKey { get; set; } = new HotkeyNode(Keys.NumPad0);
-
-    [Menu("Beast Tab Name")]
-    public TextNode BeastTabName { get; set; } = new();
-
-    [Menu("Consumables Tab Name")]
-    public TextNode ConsumablesTabName { get; set; } = new();
 
     public ToggleNode WorkGrabber { get; set; } = new ToggleNode(false);
 
@@ -49,7 +41,11 @@ public class BeastsSettings : ISettings
     [Menu("Fold Beast To Stash")]
     public ToggleNode FoldToStash { get; set; } = new ToggleNode(false);
 
-    public ToggleNode OrbCheck { get; set; } = new ToggleNode(false);
+    [Menu("Beast Tab Name")]
+    public TextNode BeastTabName { get; set; } = new();
+
+    [Menu("Consumables Tab Name")]
+    public TextNode ConsumablesTabName { get; set; } = new();
 
     public DSettings DSettings { get; set; } = new();
 }

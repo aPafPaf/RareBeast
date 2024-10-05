@@ -33,7 +33,9 @@ public partial class Beasts
         InventoryPlayer[,] inventorySlot = new InventoryPlayer[12, 5];
 
         //get pos inventory slots
-        var inventoryRect = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 27).GetClientRectCache;
+        var inventoryRect = GameController.IngameState.IngameUi.InventoryPanel.Children[2].GetClientRect();
+        Graphics.DrawFrame(inventoryRect, Color.Blue, 2);
+
         var invSlotW = inventoryRect.Width / 12;
         var invSlotH = inventoryRect.Height / 5;
 
@@ -53,7 +55,7 @@ public partial class Beasts
                 offsetY += invSlotW;
             }
             offsetY = inventoryRect.Y;
-            offsetX += invSlotH;
+            offsetX += invSlotH-2;
         }
 
         var beast = beasts.FirstOrDefault();

@@ -55,7 +55,7 @@ public partial class Beasts
                 offsetY += invSlotW;
             }
             offsetY = inventoryRect.Y;
-            offsetX += invSlotH-2;
+            offsetX += invSlotH - 2;
         }
 
         var beast = beasts.FirstOrDefault();

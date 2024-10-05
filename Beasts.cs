@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace RareBeasts;
 
@@ -131,7 +130,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
             Utils.Keyboard.KeyPress(System.Windows.Forms.Keys.H);
         }
 
-        var captureButton = GameController.IngameState.IngameUi.GetChildFromIndices(46,2,0,1,1,65,0,19,0);
+        var captureButton = GameController.IngameState.IngameUi.GetChildFromIndices(46, 2, 0, 1, 1, 65, 0, 19, 0);
 
         //(OpenLeftPanel/SentinelWindow/ChallengesPanel)46->2->0->1->1->65->0->19->1
         var bestiaryTab = challengesPanel.TabContainer.BestiaryTab;
@@ -154,7 +153,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
                 if (captureButton != null && captureButton.IsVisible)
                 {
                     Utils.Mouse.MoveMouse(captureButton.GetClientRectCache.Center + windowOffset);
-                    if(captureButton.HasShinyHighlight)
+                    if (captureButton.HasShinyHighlight)
                     {
                         Utils.Mouse.LeftDown(1);
                         Utils.Mouse.LeftUp(1);
@@ -276,10 +275,10 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
 
         Thread.Sleep(Settings.DSettings.ActionDelay);
 
-        var itemsOnCursor = GameController.IngameState.ServerData.PlayerInventories.Where(x=>x.TypeId == InventoryNameE.Cursor1);
-        if(itemsOnCursor.Any())
+        var itemsOnCursor = GameController.IngameState.ServerData.PlayerInventories.Where(x => x.TypeId == InventoryNameE.Cursor1);
+        if (itemsOnCursor.Any())
         {
-            if(itemsOnCursor.First().Inventory.ItemCount > 0)
+            if (itemsOnCursor.First().Inventory.ItemCount > 0)
             {
                 PlaceBeast();
             }
@@ -320,7 +319,7 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
                 offsetY += invSlotW;
             }
             offsetY = inventoryRect.Y;
-            offsetX += invSlotH;
+            offsetX += invSlotH - 2;
         }
 
         // iterate through each item in the inventory and mark used slots

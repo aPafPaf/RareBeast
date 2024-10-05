@@ -301,7 +301,8 @@ public partial class Beasts : BaseSettingsPlugin<BeastsSettings>
         InventoryPlayer[,] inventorySlot = new InventoryPlayer[12, 5];
 
         //get pos inventory slots
-        var inventoryRect = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 27).GetClientRectCache;
+        //var inventoryRect = GameController.IngameState.IngameUi.GetChildFromIndices(37, 3, 85).GetClientRectCache;
+        var inventoryRect = GameController.IngameState.IngameUi.InventoryPanel.Children[2].GetClientRectCache;
         var invSlotW = inventoryRect.Width / 12;
         var invSlotH = inventoryRect.Height / 5;
 
